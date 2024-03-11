@@ -29,6 +29,7 @@ add_subdirectory(Dependencies/bgfx.cmake)
 include_directories(Dependencies/glfw/include)
 include_directories(Dependencies/glm)
 include_directories(Dependencies/bgfx.cmake/bgfx/include)
+include_directories(Dependencies/bgfx.cmake/bgfx/examples/common)
 include_directories(Dependencies/bgfx.cmake/bx/include)
 include_directories(Dependencies/bgfx.cmake/bx/include/compat/msvc)
 include_directories(Dependencies/bgfx.cmake/bimg/include)
@@ -50,3 +51,5 @@ target_link_libraries(${PROJECT_NAME} glm)
 
 # Link BGFX library
 target_link_libraries(${PROJECT_NAME} bgfx)
+
+set(BGFX_BUILD_TOOLS_SHADER ON)
