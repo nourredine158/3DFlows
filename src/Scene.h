@@ -11,4 +11,6 @@ namespace scene
 	void shutdown();
 
 	bgfx::ShaderHandle loadShader(const char* FILENAME);
+
+	void updateMousePos(int xPos, int yPos);
 }

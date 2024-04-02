@@ -15,7 +15,13 @@
 #endif
 #include <GLFW/glfw3native.h>
 
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_bgfx.h>
+#include <iostream>
+
 #include "Scene.h"
+
 
 #define WNDW_WIDTH 1500
 #define WNDW_HEIGHT 800
@@ -34,6 +40,12 @@ static void glfw_keyCallback(GLFWwindow* window, int key, int scancode, int acti
 }
 
 
+
+static void glfw_mouseCallback(GLFWwindow * window, double xpos, double ypos)
+{
+	scene::updateMousePos(float(xpos), float(ypos));
+}
+
 int main()
 {
 	// Create a GLFW window without an OpenGL context.
@@ -44,7 +56,10 @@ int main()
 	GLFWwindow* window = glfwCreateWindow(WNDW_WIDTH, WNDW_HEIGHT, "3DFlows", nullptr, nullptr);
 	if (!window)
 		return 1;
+
 	glfwSetKeyCallback(window, glfw_keyCallback);
+	glfwSetCursorPosCallback(window, glfw_mouseCallback);
+
 	// Call bgfx::renderFrame before bgfx::init to signal to bgfx not to create a render thread.
 	// Most graphics APIs must be used on the same thread that created the window.
 	bgfx::renderFrame();
@@ -64,7 +79,10 @@ int main()
 	init.resolution.height = (uint32_t)height;
 	init.resolution.reset = BGFX_RESET_VSYNC;
 
-	//init.type = bgfx::RendererType::OpenGL;
+	//init.type = bgfx::RendererType::;
+
+	
+
 
 	if (!bgfx::init(init))
 		return 1;
@@ -77,6 +95,18 @@ int main()
 	bgfx::setViewRect(kClearView, 0, 0, bgfx::BackbufferRatio::Equal);
 
 	scene::init();
+
+
+
+	//Init imgui
+
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+
+
+	ImGui_ImplGlfw_InitForOther(window, true);
+	ImGui_Implbgfx_Init(255);
 
 	while (!glfwWindowShouldClose(window)) 
 	{
@@ -92,13 +122,26 @@ int main()
 		//// This dummy draw call is here to make sure that view 0 is cleared if no other draw calls are submitted to view 0.
 		bgfx::touch(kClearView);
 
+		ImGui_Implbgfx_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+
 		scene::update(width, height);
 
+
+		ImGui::Render();
+		ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
 		// Advance to next frame. Process submitted rendering primitives.
 		bgfx::frame();
 	}
 
 	scene::shutdown();
+
+
+	ImGui_Implbgfx_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	bgfx::shutdown();
 	glfwTerminate();

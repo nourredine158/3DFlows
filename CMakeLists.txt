@@ -25,11 +25,15 @@ add_subdirectory(Dependencies/glm)
 # Add BGFX subdirectory
 add_subdirectory(Dependencies/bgfx.cmake)
 
+
 # Include directories for GLFW, GLM, and BGFX
 include_directories(Dependencies/glfw/include)
 include_directories(Dependencies/glm)
 include_directories(Dependencies/bgfx.cmake/bgfx/include)
-include_directories(Dependencies/bgfx.cmake/bgfx/examples/common)
+
+include_directories(Dependencies/imgui)
+include_directories(Dependencies/imgui/backends)
+
 include_directories(Dependencies/bgfx.cmake/bx/include)
 include_directories(Dependencies/bgfx.cmake/bx/include/compat/msvc)
 include_directories(Dependencies/bgfx.cmake/bimg/include)
@@ -38,8 +42,11 @@ include_directories(Dependencies/bgfx.cmake/bimg/include)
 # Gather all source and header files in the src directory
 file(GLOB_RECURSE SOURCES "src/*.cpp" "src/*.h")
 
+file(GLOB IMGUI_SOURCES "Dependencies/imgui/*.cpp" "Dependencies/imgui/*.h")
+file(GLOB IMGUI_BACKENDS "Dependencies/imgui/backends/*.cpp" "Dependencies/imgui/backends/*.h")
+
 # Ajoutez une source à l'exécutable de ce projet.
-add_executable (${PROJECT_NAME} ${SOURCES})
+add_executable (${PROJECT_NAME} ${SOURCES} ${IMGUI_SOURCES} ${IMGUI_BACKENDS})
 
 target_compile_options(${PROJECT_NAME} PUBLIC "/Zc:__cplusplus")
 
@@ -51,5 +58,6 @@ target_link_libraries(${PROJECT_NAME} glm)
 
 # Link BGFX library
 target_link_libraries(${PROJECT_NAME} bgfx)
+
 
 set(BGFX_BUILD_TOOLS_SHADER ON)
